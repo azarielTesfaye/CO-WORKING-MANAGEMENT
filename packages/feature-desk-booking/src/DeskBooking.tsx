@@ -9,7 +9,7 @@ export const DeskBooking: React.FC = () => {
   const model = useDeskBookings();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <DeskBookingFormCard
         selectedDate={model.selectedDate}
         onDateChange={model.setSelectedDate}
