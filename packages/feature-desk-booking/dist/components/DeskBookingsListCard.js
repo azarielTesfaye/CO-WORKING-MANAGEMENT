@@ -1,0 +1,3 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Card, Button } from '@cowork/ui-components';
+export const DeskBookingsListCard = ({ bookings, onCancel, }) => (_jsx(Card, { title: "My Bookings for this day", children: bookings.length === 0 ? (_jsx("p", { className: "text-gray-500", children: "No bookings for this date." })) : (_jsx("ul", { className: "space-y-2", children: bookings.map((booking) => (_jsxs("li", { className: "flex justify-between items-center border-b pb-1 gap-2 flex-wrap", children: [_jsxs("span", { children: ["Desk ", booking.deskId, " at ", booking.startHour, ":00"] }), _jsx(Button, { variant: "danger", onClick: () => onCancel(booking.id), children: "Cancel" })] }, booking.id))) })) }));
