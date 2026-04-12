@@ -13,6 +13,7 @@ export function hasOverlap(aStart: number, aDuration: number, bStart: number, bD
   return aStart < bEnd && aEnd > bStart;
 }
 
+// excludeBookingId skips that booking (used when PATCH updates an existing row).
 export function isBookingConflict(
   target: Booking,
   existing: Booking[],
