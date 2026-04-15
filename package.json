@@ -6,7 +6,9 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build -w @cowork/utils && npm run build -w @cowork/ui-components && npm run build -w @cowork/feature-desk-booking && npm run build -w @cowork/web",
-    "dev": "npm run build && npm run dev -w @cowork/web"
+    "build": "npm run build -w @cowork/utils && npm run build -w @cowork/ui-components && npm run build -w @cowork/feature-desk-booking && npm run build -w @cowork/api && npm run build -w @cowork/web",
+    "dev": "npm run build && npm run dev -w @cowork/web",
+    "dev:api": "npm run dev -w @cowork/api",
+    "dev:web": "npm run dev -w @cowork/web"
   }
 }
