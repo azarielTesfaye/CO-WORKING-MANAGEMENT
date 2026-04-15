@@ -1,24 +1,33 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.formatDate = formatDate;
+exports.formatTime = formatTime;
+exports.isSameDay = isSameDay;
+exports.isOverlapping = isOverlapping;
+exports.isTimeSlotAvailable = isTimeSlotAvailable;
+exports.saveToLocal = saveToLocal;
+exports.loadFromLocal = loadFromLocal;
 // Date helpers
-export function formatDate(date) {
+function formatDate(date) {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
-export function formatTime(date) {
+function formatTime(date) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
-export function isSameDay(date1, date2) {
+function isSameDay(date1, date2) {
     return date1.toDateString() === date2.toDateString();
 }
-export function isOverlapping(a, b) {
+function isOverlapping(a, b) {
     return a.start < b.end && a.end > b.start;
 }
-export function isTimeSlotAvailable(desired, existing) {
+function isTimeSlotAvailable(desired, existing) {
     return !existing.some(ex => isOverlapping(desired, ex));
 }
 // Storage helpers (localStorage)
-export function saveToLocal(key, data) {
+function saveToLocal(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
 }
-export function loadFromLocal(key, defaultValue) {
+function loadFromLocal(key, defaultValue) {
     const raw = localStorage.getItem(key);
     if (!raw)
         return defaultValue;
