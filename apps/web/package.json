@@ -9,6 +9,7 @@
     "preview": "npx vite preview"
   },
   "dependencies": {
+    "@cowork/feature-visitor-checkin": "1.0.0",
     "@cowork/feature-desk-booking": "1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
