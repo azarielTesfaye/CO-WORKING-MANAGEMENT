@@ -1,6 +1,7 @@
 import React from 'react';
 import { DeskBooking } from '@cowork/feature-desk-booking';
 import { VisitorCheckIn } from '@cowork/feature-visitor-checkin';
+import { AnnouncementsBoard } from '@cowork/feature-announcements';
 
 const App: React.FC = () => (
   <div className="relative min-h-screen overflow-hidden text-slate-900">
@@ -29,6 +30,7 @@ const App: React.FC = () => (
       <main className="space-y-8">
         <DeskBooking />
         <VisitorCheckIn />
+        <AnnouncementsBoard />
       </main>
 
       <footer className="mt-14 text-center text-xs text-slate-400 sm:text-left">

@@ -6,6 +6,7 @@ export default {
     '../../packages/ui-components/src/**/*.{js,ts,jsx,tsx}',
     '../../packages/feature-desk-booking/src/**/*.{js,ts,jsx,tsx}',
     '../../packages/feature-visitor-checkin/src/**/*.{js,ts,jsx,tsx}',
+    '../../packages/feature-announcements/src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
