@@ -2,6 +2,9 @@ import React from 'react';
 import { DeskBooking } from '@cowork/feature-desk-booking';
 import { VisitorCheckIn } from '@cowork/feature-visitor-checkin';
 import { AnnouncementsBoard } from '@cowork/feature-announcements';
+import { MeetingRoomBooking } from '@cowork/feature-meeting-rooms';
+import { WifiGuestPass } from '@cowork/feature-wifi-guest';
+import { SupplyRequestBoard } from '@cowork/feature-supply-request';
 
 type AuthMode = 'login' | 'register';
 type AppView = 'dashboard' | 'profile';
@@ -212,7 +215,7 @@ const App: React.FC = () => {
             Co-working Management
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:mx-0">
-            Login or register to access your account and manage desk bookings.
+            Sign in to manage your account, desk and room bookings, and workspace tools.
           </p>
         </header>
 
@@ -266,7 +269,10 @@ const App: React.FC = () => {
               {view === 'dashboard' ? (
                 <>
                   <DeskBooking />
+                  <MeetingRoomBooking />
                   <VisitorCheckIn />
+                  <WifiGuestPass />
+                  <SupplyRequestBoard />
                   <AnnouncementsBoard />
                 </>
               ) : (

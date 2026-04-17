@@ -12,6 +12,9 @@
     "@cowork/feature-announcements": "1.0.0",
     "@cowork/feature-visitor-checkin": "1.0.0",
     "@cowork/feature-desk-booking": "1.0.0",
+    "@cowork/feature-meeting-rooms": "1.0.0",
+    "@cowork/feature-wifi-guest": "1.0.0",
+    "@cowork/feature-supply-request": "1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

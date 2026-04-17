@@ -1,0 +1,1 @@
+export { WifiGuestPass } from './WifiGuestPass';
