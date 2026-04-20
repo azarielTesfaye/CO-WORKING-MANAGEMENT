@@ -5,6 +5,7 @@ import { requireAuth, requireRole } from "../middleware/auth.js";
 export const metricsRouter = Router();
 
 metricsRouter.get("/overview", requireAuth, requireRole(["admin"]), (_req, res) => {
+  // UTC calendar day (YYYY-MM-DD) for "today" counters.
   const today = new Date().toISOString().slice(0, 10);
   const todayBookings = bookings.filter((b) => b.date === today);
   const activeDesks = desks.filter((d) => d.status === "available").length;
