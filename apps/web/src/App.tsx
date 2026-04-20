@@ -5,6 +5,8 @@ import { AnnouncementsBoard } from '@cowork/feature-announcements';
 import { MeetingRoomBooking } from '@cowork/feature-meeting-rooms';
 import { WifiGuestPass } from '@cowork/feature-wifi-guest';
 import { SupplyRequestBoard } from '@cowork/feature-supply-request';
+import { LostFoundBoard } from '@cowork/feature-lost-found';
+import { EmergencyContactsPanel } from '@cowork/feature-emergency-contacts';
 
 type AuthMode = 'login' | 'register';
 type AppView = 'dashboard' | 'profile';
@@ -273,6 +275,8 @@ const App: React.FC = () => {
                   <VisitorCheckIn />
                   <WifiGuestPass />
                   <SupplyRequestBoard />
+                  <LostFoundBoard />
+                  <EmergencyContactsPanel />
                   <AnnouncementsBoard />
                 </>
               ) : (

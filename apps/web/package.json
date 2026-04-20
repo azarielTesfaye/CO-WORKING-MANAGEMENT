@@ -15,6 +15,8 @@
     "@cowork/feature-meeting-rooms": "1.0.0",
     "@cowork/feature-wifi-guest": "1.0.0",
     "@cowork/feature-supply-request": "1.0.0",
+    "@cowork/feature-lost-found": "1.0.0",
+    "@cowork/feature-emergency-contacts": "1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
