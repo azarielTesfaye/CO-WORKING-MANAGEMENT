@@ -13,8 +13,15 @@ export function hasOverlap(aStart: number, aDuration: number, bStart: number, bD
   return aStart < bEnd && aEnd > bStart;
 }
 
-export function isBookingConflict(target: Booking, existing: Booking[]): boolean {
+export function isBookingConflict(
+  target: Booking,
+  existing: Booking[],
+  excludeBookingId?: string,
+): boolean {
   return existing.some((b) => {
+    if (excludeBookingId && b.id === excludeBookingId) {
+      return false;
+    }
     if (b.deskId !== target.deskId || b.date !== target.date) {
       return false;
     }

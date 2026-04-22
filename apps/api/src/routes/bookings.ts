@@ -14,6 +14,16 @@ const createBookingSchema = z.object({
   notes: z.string().max(300).optional(),
 });
 
+const updateBookingSchema = z
+  .object({
+    deskId: z.string().min(1).optional(),
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    startHour: z.number().int().optional(),
+    durationHours: z.number().int().min(1).max(8).optional(),
+    notes: z.string().max(300).optional(),
+  })
+  .refine((body) => Object.keys(body).length > 0, { message: "At least one field is required" });
+
 export const bookingRouter = Router();
 
 bookingRouter.get("/", requireAuth, (req, res) => {
@@ -92,6 +102,58 @@ bookingRouter.post("/", requireAuth, (req, res) => {
 
   bookings.push(newBooking);
   res.status(201).json(newBooking);
+});
+
+bookingRouter.patch("/:bookingId", requireAuth, (req, res) => {
+  const parse = updateBookingSchema.safeParse(req.body);
+  if (!parse.success) {
+    res.status(400).json({ message: "Invalid payload", errors: parse.error.flatten() });
+    return;
+  }
+
+  const index = bookings.findIndex((b) => b.id === req.params.bookingId);
+  if (index < 0) {
+    res.status(404).json({ message: "Booking not found" });
+    return;
+  }
+
+  const booking = bookings[index];
+  const isOwner = booking.userId === req.authUser?.id;
+  const isAdmin = req.authUser?.role === "admin";
+  if (!isOwner && !isAdmin) {
+    res.status(403).json({ message: "Cannot update another member's booking" });
+    return;
+  }
+
+  const data = parse.data;
+  const updated: Booking = { ...booking };
+  if (data.deskId !== undefined) updated.deskId = data.deskId;
+  if (data.date !== undefined) updated.date = data.date;
+  if (data.startHour !== undefined) updated.startHour = data.startHour;
+  if (data.durationHours !== undefined) updated.durationHours = data.durationHours;
+  if (data.notes !== undefined) updated.notes = data.notes;
+
+  const desk = desks.find((d) => d.id === updated.deskId);
+  if (!desk) {
+    res.status(404).json({ message: "Desk not found" });
+    return;
+  }
+  if (desk.status !== "available") {
+    res.status(409).json({ message: "Desk is not available" });
+    return;
+  }
+  if (!isValidHour(updated.startHour)) {
+    res.status(400).json({ message: "startHour is outside business hours" });
+    return;
+  }
+
+  if (isBookingConflict(updated, bookings, updated.id)) {
+    res.status(409).json({ message: "Time slot conflict for this desk" });
+    return;
+  }
+
+  bookings[index] = updated;
+  res.json(updated);
 });
 
 bookingRouter.delete("/:bookingId", requireAuth, (req, res) => {

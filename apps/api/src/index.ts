@@ -23,7 +23,13 @@ app.get("/", (_req, res) => {
       health: "GET /health",
       auth: ["/auth/register", "/auth/login", "/auth/me"],
       desks: ["/desks", "/desks/:deskId"],
-      bookings: ["/bookings", "/bookings/availability", "/bookings/:bookingId", "/bookings/admin/clear"],
+      bookings: [
+        "/bookings",
+        "/bookings/availability",
+        "/bookings/:bookingId",
+        "PATCH /bookings/:bookingId",
+        "/bookings/admin/clear",
+      ],
       metrics: ["/metrics/overview"],
     },
     demoAccounts: [
