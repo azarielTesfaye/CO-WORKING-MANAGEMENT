@@ -19,6 +19,7 @@ app.use(morgan("dev"));
 app.get("/", (_req, res) => {
   res.json({
     name: "@cowork/api",
+    version: "1.0.0",
     docs: {
       health: "GET /health",
       auth: ["/auth/register", "/auth/login", "/auth/me"],
