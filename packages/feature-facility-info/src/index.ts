@@ -1,0 +1,1 @@
+export { FacilityInfoPanel } from './FacilityInfoPanel';

@@ -7,6 +7,7 @@ import { WifiGuestPass } from '@cowork/feature-wifi-guest';
 import { SupplyRequestBoard } from '@cowork/feature-supply-request';
 import { LostFoundBoard } from '@cowork/feature-lost-found';
 import { EmergencyContactsPanel } from '@cowork/feature-emergency-contacts';
+import { FacilityInfoPanel } from '@cowork/feature-facility-info';
 
 type AuthMode = 'login' | 'register';
 type AppView = 'dashboard' | 'profile' | 'admin' | 'bookings';
@@ -589,6 +590,7 @@ const App: React.FC = () => {
               {view === 'dashboard' ? (
                 <>
                   <DeskBooking />
+                  <FacilityInfoPanel />
                   <MeetingRoomBooking />
                   <VisitorCheckIn />
                   <WifiGuestPass />
@@ -1072,7 +1074,7 @@ const App: React.FC = () => {
                     )}
                   </section>
                 </>
-              )}
+              ) : null}
             </>
           ) : (
             <section className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm backdrop-blur">
