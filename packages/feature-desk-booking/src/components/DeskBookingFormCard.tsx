@@ -9,7 +9,7 @@ export interface DeskBookingFormCardProps {
   onDateChange: (date: string) => void;
   selectedDesk: string;
   onDeskChange: (desk: string) => void;
-  availableDesks: string[];
+  availableDesks: Array<{ id: string; label: string; zone: string }>;
   onOpenBookModal: () => void;
 }
 
@@ -50,8 +50,8 @@ export const DeskBookingFormCard: React.FC<DeskBookingFormCardProps> = ({
           className={fieldClass}
         >
           {availableDesks.map((desk) => (
-            <option key={desk} value={desk}>
-              Desk {desk}
+            <option key={desk.id} value={desk.id}>
+              {desk.label} ({desk.zone})
             </option>
           ))}
         </select>

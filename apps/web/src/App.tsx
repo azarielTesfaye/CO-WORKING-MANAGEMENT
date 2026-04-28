@@ -589,7 +589,7 @@ const App: React.FC = () => {
               </section>
               {view === 'dashboard' ? (
                 <>
-                  <DeskBooking />
+                  <DeskBooking apiBaseUrl={API_BASE_URL} token={token} />
                   <FacilityInfoPanel />
                   <MeetingRoomBooking />
                   <VisitorCheckIn />

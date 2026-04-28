@@ -4,11 +4,13 @@ import type { Booking } from '../types';
 
 export interface DeskBookingsListCardProps {
   bookings: Booking[];
+  deskLabels: Record<string, string>;
   onCancel: (id: string) => void;
 }
 
 export const DeskBookingsListCard: React.FC<DeskBookingsListCardProps> = ({
   bookings,
+  deskLabels,
   onCancel,
 }) => (
   <Card
@@ -28,7 +30,9 @@ export const DeskBookingsListCard: React.FC<DeskBookingsListCardProps> = ({
             className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-gradient-to-r from-slate-50/90 to-white px-4 py-3.5 shadow-sm"
           >
             <div className="flex min-w-0 flex-1 items-baseline gap-2">
-              <span className="truncate text-sm font-semibold text-slate-900">Desk {booking.deskId}</span>
+              <span className="truncate text-sm font-semibold text-slate-900">
+                {deskLabels[booking.deskId] ?? `Desk ${booking.deskId}`}
+              </span>
               <span className="text-slate-300">·</span>
               <span className="text-sm tabular-nums text-slate-600">
                 {booking.startHour}:00

@@ -5,8 +5,13 @@ import { DeskBookingsListCard } from './components/DeskBookingsListCard';
 import { DeskTimeSlotModal } from './components/DeskTimeSlotModal';
 
 /** Composes small feature-local components; shared primitives come from `@cowork/ui-components`. */
-export const DeskBooking: React.FC = () => {
-  const model = useDeskBookings();
+export interface DeskBookingProps {
+  apiBaseUrl?: string;
+  token?: string | null;
+}
+
+export const DeskBooking: React.FC<DeskBookingProps> = ({ apiBaseUrl, token }) => {
+  const model = useDeskBookings({ apiBaseUrl, token });
 
   return (
     <div className="space-y-8">
@@ -21,6 +26,7 @@ export const DeskBooking: React.FC = () => {
 
       <DeskBookingsListCard
         bookings={model.myBookingsForToday}
+        deskLabels={model.deskLabels}
         onCancel={model.handleCancel}
       />
 
