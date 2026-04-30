@@ -10,7 +10,7 @@ import { EmergencyContactsPanel } from '@cowork/feature-emergency-contacts';
 import { FacilityInfoPanel } from '@cowork/feature-facility-info';
 
 type AuthMode = 'login' | 'register';
-type AppView = 'dashboard' | 'profile' | 'admin' | 'bookings';
+type AppView = 'dashboard' | 'profile' | 'admin' | 'bookings' | 'metrics';
 type Role = 'admin' | 'member';
 type DeskStatus = 'available' | 'maintenance';
 
@@ -56,6 +56,16 @@ interface ApiBooking {
   durationHours: number;
   createdAt: string;
   notes?: string;
+}
+
+interface MetricsOverview {
+  totals: {
+    desks: number;
+    activeDesks: number;
+    bookings: number;
+    todayBookings: number;
+  };
+  zoneDistribution: Record<string, number>;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000';
@@ -131,6 +141,9 @@ const App: React.FC = () => {
     durationHours: 1,
     notes: '',
   });
+  const [metrics, setMetrics] = React.useState<MetricsOverview | null>(null);
+  const [metricsLoading, setMetricsLoading] = React.useState(false);
+  const [metricsError, setMetricsError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     async function loadCurrentUser() {
@@ -227,6 +240,28 @@ const App: React.FC = () => {
     void fetchDesks();
   }, [view, user?.role, fetchDesks]);
 
+  const fetchMetrics = React.useCallback(async () => {
+    if (!token || user?.role !== 'admin') return;
+    setMetricsLoading(true);
+    setMetricsError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/metrics/overview`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = await parseApiResponse<MetricsOverview>(response);
+      setMetrics(payload);
+    } catch (metricsFetchError) {
+      setMetricsError(metricsFetchError instanceof Error ? metricsFetchError.message : 'Failed to fetch metrics');
+    } finally {
+      setMetricsLoading(false);
+    }
+  }, [token, user?.role]);
+
+  React.useEffect(() => {
+    if (view !== 'metrics' || user?.role !== 'admin') return;
+    void fetchMetrics();
+  }, [view, user?.role, fetchMetrics]);
+
   const fetchBookings = React.useCallback(async () => {
     if (!token) return;
     setBookingsLoading(true);
@@ -320,6 +355,8 @@ const App: React.FC = () => {
     setBookings([]);
     setBookingsError(null);
     setBookingsMessage(null);
+    setMetrics(null);
+    setMetricsError(null);
     resetDeskForm();
   };
 
@@ -575,6 +612,19 @@ const App: React.FC = () => {
                         }`}
                       >
                         Admin
+                      </button>
+                    ) : null}
+                    {user.role === 'admin' ? (
+                      <button
+                        type="button"
+                        onClick={() => setView('metrics')}
+                        className={`inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition ${
+                          view === 'metrics'
+                            ? 'bg-indigo-600 text-white'
+                            : 'border border-slate-300 text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        Metrics
                       </button>
                     ) : null}
                     <button
@@ -924,6 +974,66 @@ const App: React.FC = () => {
                         </select>
                       </label>
                     </div>
+                  </section>
+                </>
+              ) : view === 'metrics' && user.role === 'admin' ? (
+                <>
+                  <section className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm backdrop-blur">
+                    <div className="mb-4 flex items-center justify-between">
+                      <h2 className="text-lg font-semibold text-slate-900">Workspace Metrics</h2>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void fetchMetrics();
+                        }}
+                        className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
+                      >
+                        Refresh
+                      </button>
+                    </div>
+                    {metricsLoading ? <p className="text-sm text-slate-600">Loading metrics...</p> : null}
+                    {metricsError ? <p className="text-sm text-rose-600">{metricsError}</p> : null}
+                    {metrics ? (
+                      <>
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                            <p className="text-xs uppercase tracking-wide text-slate-500">Total Desks</p>
+                            <p className="mt-1 text-2xl font-bold text-slate-900">{metrics.totals.desks}</p>
+                          </div>
+                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                            <p className="text-xs uppercase tracking-wide text-slate-500">Active Desks</p>
+                            <p className="mt-1 text-2xl font-bold text-slate-900">{metrics.totals.activeDesks}</p>
+                          </div>
+                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                            <p className="text-xs uppercase tracking-wide text-slate-500">Total Bookings</p>
+                            <p className="mt-1 text-2xl font-bold text-slate-900">{metrics.totals.bookings}</p>
+                          </div>
+                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                            <p className="text-xs uppercase tracking-wide text-slate-500">Today Bookings</p>
+                            <p className="mt-1 text-2xl font-bold text-slate-900">{metrics.totals.todayBookings}</p>
+                          </div>
+                        </div>
+
+                        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
+                          <h3 className="text-sm font-semibold text-slate-900">Zone Distribution</h3>
+                          {Object.keys(metrics.zoneDistribution).length === 0 ? (
+                            <p className="mt-2 text-sm text-slate-500">No zone data available.</p>
+                          ) : (
+                            <ul className="mt-3 space-y-2">
+                              {Object.entries(metrics.zoneDistribution).map(([zone, count]) => (
+                                <li
+                                  key={zone}
+                                  className="flex items-center justify-between rounded-xl border border-slate-100 px-3 py-2 text-sm"
+                                >
+                                  <span className="font-medium text-slate-700">{zone}</span>
+                                  <span className="font-semibold text-slate-900">{count}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </>
+                    ) : null}
                   </section>
                 </>
               ) : user.role === 'admin' ? (
