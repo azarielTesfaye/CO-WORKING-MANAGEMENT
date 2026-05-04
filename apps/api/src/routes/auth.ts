@@ -16,6 +16,11 @@ const loginSchema = z.object({
   password: z.string().min(6).max(72),
 });
 
+const updateMeSchema = z.object({
+  name: z.string().min(2).max(80),
+  email: z.string().email(),
+});
+
 export const authRouter = Router();
 
 authRouter.post("/register", async (req, res) => {
@@ -80,5 +85,31 @@ authRouter.get("/me", requireAuth, (req, res) => {
     res.status(404).json({ message: "User not found" });
     return;
   }
+  res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
+});
+
+authRouter.patch("/me", requireAuth, (req, res) => {
+  const parse = updateMeSchema.safeParse(req.body);
+  if (!parse.success) {
+    res.status(400).json({ message: "Invalid payload", errors: parse.error.flatten() });
+    return;
+  }
+
+  const user = getCurrentUser(req);
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+
+  const email = parse.data.email.toLowerCase();
+  const conflict = users.find((u) => u.email.toLowerCase() === email && u.id !== user.id);
+  if (conflict) {
+    res.status(409).json({ message: "Email already exists" });
+    return;
+  }
+
+  user.name = parse.data.name;
+  user.email = email;
+
   res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
 });

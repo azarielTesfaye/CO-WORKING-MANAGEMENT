@@ -93,6 +93,7 @@ const App: React.FC = () => {
   const [profileName, setProfileName] = React.useState('');
   const [profileEmail, setProfileEmail] = React.useState('');
   const [profileMessage, setProfileMessage] = React.useState<string | null>(null);
+  const [profileSaving, setProfileSaving] = React.useState(false);
   const [desks, setDesks] = React.useState<Desk[]>([]);
   const [desksLoading, setDesksLoading] = React.useState(false);
   const [desksError, setDesksError] = React.useState<string | null>(null);
@@ -362,15 +363,33 @@ const App: React.FC = () => {
 
   const isAuthenticated = Boolean(user && token);
 
-  const handleProfileSave = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleProfileSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!user) return;
-    setUser({
-      ...user,
-      name: profileName.trim() || user.name,
-      email: profileEmail.trim() || user.email,
-    });
-    setProfileMessage('Profile details updated locally.');
+    if (!user || !token) return;
+    setProfileSaving(true);
+    setProfileMessage(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: profileName.trim(),
+          email: profileEmail.trim(),
+        }),
+      });
+      const updatedUser = await parseApiResponse<AuthUser>(response);
+      setUser(updatedUser);
+      setProfileName(updatedUser.name);
+      setProfileEmail(updatedUser.email);
+      setProfileMessage('Profile details saved to your account.');
+    } catch (saveError) {
+      setProfileMessage(saveError instanceof Error ? saveError.message : 'Failed to save profile');
+    } finally {
+      setProfileSaving(false);
+    }
   };
 
   const handleDeskFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -901,9 +920,10 @@ const App: React.FC = () => {
                       {profileMessage ? <p className="text-sm text-emerald-700">{profileMessage}</p> : null}
                       <button
                         type="submit"
-                        className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                        disabled={profileSaving}
+                        className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70"
                       >
-                        Save profile
+                        {profileSaving ? 'Saving...' : 'Save profile'}
                       </button>
                     </form>
                   </section>
